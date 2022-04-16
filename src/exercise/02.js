@@ -1,10 +1,11 @@
 // useEffect: persistent state
 // http://localhost:3000/isolated/exercise/02.js
 
-import * as React from 'react'
+import * as React from "react";
 
-function Greeting({initialName = ''}) {
-  const [name, setName] = React.useState(window.localStorage.getItem("name") ?? initialName);
+function Greeting({initialName = ""}) {
+  const initialState = () => window.localStorage.getItem("name") ?? initialName;
+  const [name, setName] = React.useState<string>(initialState);
 
   React.useEffect(() => {
     if (name) {
@@ -13,21 +14,22 @@ function Greeting({initialName = ''}) {
   }, [name]);
 
   function handleChange(event) {
-    setName(event.target.value)
+    setName(event.target.value);
   }
+
   return (
     <div>
       <form>
         <label htmlFor="name">Name: </label>
         <input value={name} onChange={handleChange} id="name" />
       </form>
-      {name ? <strong>Hello {name}</strong> : 'Please type your name'}
+      {name ? <strong>Hello {name}</strong> : "Please type your name"}
     </div>
-  )
+  );
 }
 
 function App() {
-  return <Greeting />
+  return <Greeting />;
 }
 
-export default App
+export default App;
