@@ -3,9 +3,15 @@
 
 import * as React from "react";
 
-function Greeting({initialName = ""}) {
+function useLocalStorageState(initialName: string = "") {
   const initialState = () => window.localStorage.getItem("name") ?? initialName;
-  const [name, setName] = React.useState<string>(initialState);
+  const [name, setName] = React.useState(initialState);
+
+  return {name, setName}
+}
+
+function Greeting({initialName = ""}: {initialName?: string}) {
+  const {name, setName} = useLocalStorageState(initialName)
 
   React.useEffect(() => {
     if (name) {
@@ -13,7 +19,7 @@ function Greeting({initialName = ""}) {
     }
   }, [name]);
 
-  function handleChange(event) {
+  function handleChange(event: any) {
     setName(event.target.value);
   }
 
