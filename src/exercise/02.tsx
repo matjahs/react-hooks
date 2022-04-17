@@ -4,8 +4,9 @@
 import * as React from "react";
 
 function useLocalStorageState(initialName: string = "") {
-  const initialState = () => window.localStorage.getItem("name") ?? initialName;
-  const [name, setName] = React.useState(initialState);
+  const [name, setName] = React.useState(
+    () => window.localStorage.getItem("name") ?? initialName
+  );
 
   return {name, setName}
 }
