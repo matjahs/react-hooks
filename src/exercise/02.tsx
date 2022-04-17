@@ -3,20 +3,46 @@
 
 import * as React from "react";
 
-function useLocalStorageState(key: string, defaultValue: string = "") {
-  const [state, setState] = React.useState(
-    () => window.localStorage.getItem(key) ?? defaultValue
-  );
 
-  React.useEffect(() => {
-    window.localStorage.setItem(key, state ?? "");
-  }, [state, state]);
-
-  return {state, setState}
+interface UseLocalStorageStateOptions<T> {
+  key: string;
+  defaultValue?: unknown;
+  serialize?: (arg: T) => string;
+  deserialize?: (arg: string) => T;
 }
 
-function Greeting({initialName = ""}: {initialName?: string}) {
-  const {state, setState} = useLocalStorageState("name", initialName)
+function useLocalStorageState<T = string>(
+  {key, defaultValue, serialize = JSON.stringify, deserialize = JSON.parse}: UseLocalStorageStateOptions<T>) {
+  const [state, setState] = React.useState(
+    () => {
+      const storedValue = window.localStorage.getItem(key);
+
+      if (storedValue) {
+        return deserialize(storedValue);
+      }
+
+      return typeof defaultValue === "function" ? defaultValue() : defaultValue;
+    }
+  );
+
+  const prevKeyRef = React.useRef(key);
+
+  React.useEffect(() => {
+    const prevKey = prevKeyRef.current;
+
+    if(prevKey !== key) {
+      window.localStorage.removeItem(prevKey);
+    }
+    prevKeyRef.current = key;
+
+    window.localStorage.setItem(key, serialize(state));
+  }, [state, key, serialize, deserialize]);
+
+  return { state, setState };
+}
+
+function Greeting({ initialName = "" }: { initialName?: string }) {
+  const { state, setState } = useLocalStorageState({key: "name", defaultValue: initialName});
 
   function handleChange(event: any) {
     setState(event.target.value);
