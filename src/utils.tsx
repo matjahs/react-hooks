@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Dispatch, SetStateAction } from "react";
 
 /**
  *
@@ -7,12 +8,17 @@ import * as React from 'react'
  * @param {{serialize: Function, deserialize: Function}} options The serialize and deserialize functions to use (defaults to JSON.stringify and JSON.parse respectively)
  */
 
-function useLocalStorageState(
-  key,
-  defaultValue = '',
-  {serialize = JSON.stringify, deserialize = JSON.parse} = {},
-) {
-  const [state, setState] = React.useState(() => {
+interface UseLocalStorageStateOptions<T> {
+  key: string;
+  defaultValue?: unknown;
+  serialize?: (arg: T) => string;
+  deserialize?: (arg: string) => T;
+}
+
+function useLocalStorageState<T>(
+  {key, defaultValue, serialize = JSON.stringify, deserialize = JSON.parse}: UseLocalStorageStateOptions<T>
+): [T, Dispatch<SetStateAction<T>>] {
+  const [state, setState] = React.useState<T>(() => {
     const valueInLocalStorage = window.localStorage.getItem(key)
     if (valueInLocalStorage) {
       return deserialize(valueInLocalStorage)
