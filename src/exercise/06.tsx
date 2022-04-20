@@ -2,7 +2,7 @@
 // http://localhost:3000/isolated/exercise/06.tsx
 
 import * as React from "react";
-import { PokemonForm, fetchPokemon, PokemonInfoFallback, PokemonDataView } from "../pokemon";
+import { PokemonForm, fetchPokemon, PokemonInfoFallback, PokemonDataView, PokemonErrorBoundary } from "../pokemon";
 
 const enum Status {
   Idle,
@@ -18,7 +18,7 @@ interface Attack {
 }
 
 interface Attacks {
-  special: Attack[]
+  special: Attack[];
 }
 
 interface PokemonData {
@@ -39,7 +39,7 @@ const initialState: State = {
   status: Status.Idle,
   pokemon: null,
   error: null
-}
+};
 
 function PokemonInfo({ pokemonName }: any): any {
   const [state, setState] = React.useState<State>(initialState);
@@ -76,11 +76,8 @@ function PokemonInfo({ pokemonName }: any): any {
   }, [pokemonName]);
 
   if(state.status === Status.Rejected) {
-    return (
-      <div role="alert">
-        There was an error: <pre style={{ whiteSpace: "normal" }}>{state.error?.message ?? "unknown error"}</pre>
-      </div>
-    )
+    // Will be handled by our error boundary.
+    throw state.error;
   }
 
   if(state.status === Status.Idle) {
@@ -106,13 +103,15 @@ function App() {
   }
 
   return (
+
     <div className="pokemon-info-app">
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        <PokemonInfo pokemonName={pokemonName} />
+        <PokemonErrorBoundary>
+          <PokemonInfo pokemonName={pokemonName} />
+        </PokemonErrorBoundary>
       </div>
-
     </div>
   );
 }
