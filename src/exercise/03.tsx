@@ -1,5 +1,5 @@
 // Lifting state
-// http://localhost:3000/isolated/exercise/03.js
+// http://localhost:3000/isolated/exercise/03.tsx
 
 import * as React from 'react'
 

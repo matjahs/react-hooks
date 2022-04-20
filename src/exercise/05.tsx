@@ -1,5 +1,5 @@
 // useRef and useEffect: DOM interaction
-// http://localhost:3000/isolated/exercise/05.js
+// http://localhost:3000/isolated/exercise/05.tsx
 
 import * as React from 'react'
 // eslint-disable-next-line no-unused-vars

@@ -1,5 +1,5 @@
 // useState: tic tac toe
-// http://localhost:3000/isolated/exercise/04.js
+// http://localhost:3000/isolated/exercise/04.tsx
 
 import * as React from "react";
 
@@ -18,15 +18,12 @@ function Board() {
   // be an index. So if they click the center square, this will be `4`.
   function selectSquare(square: number) {
     if(square < 0 || square > 8) {
-      console.error(`square must be between 0 and 8, got ${square}`);
       return;
     }
     if(squares[square] !== null) {
-      console.error(`square ${square} is already taken by ${squares[square]}`);
       return;
     }
     if(winner) {
-      console.error(`game has ended, please restart to continue playing`);
       return;
     }
 

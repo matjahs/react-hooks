@@ -1,5 +1,5 @@
 // useState: tic tac toe
-// http://localhost:3000/isolated/exercise/04.js
+// http://localhost:3000/isolated/exercise/04.tsx
 
 import * as React from "react";
 import { useLocalStorageState } from "../utils";
