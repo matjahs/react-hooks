@@ -2,7 +2,18 @@
 // http://localhost:3000/isolated/exercise/06.tsx
 
 import * as React from "react";
-import { PokemonForm, fetchPokemon, PokemonInfoFallback, PokemonDataView, PokemonErrorBoundary } from "../pokemon";
+import { PokemonForm, fetchPokemon, PokemonInfoFallback, PokemonDataView } from "../pokemon";
+import {ErrorBoundary, FallbackProps} from "react-error-boundary";
+
+function ErrorFallback({error, resetErrorBoundary}: FallbackProps) {
+  return (
+    <div role="alert">
+      There was an error:{' '}
+      <pre style={{whiteSpace: 'normal'}}>{error.message}</pre>
+      <button onClick={resetErrorBoundary}>Try again</button>
+    </div>
+  )
+}
 
 const enum Status {
   Idle,
@@ -35,14 +46,12 @@ interface State {
   error: Error | null;
 }
 
-const initialState: State = {
-  status: Status.Idle,
-  pokemon: null,
-  error: null
-};
-
 function PokemonInfo({ pokemonName }: any): any {
-  const [state, setState] = React.useState<State>(initialState);
+  const [state, setState] = React.useState<State>({
+    status: pokemonName ? Status.Pending : Status.Idle,
+    pokemon: null,
+    error: null
+  });
 
   React.useEffect(() => {
     if(!pokemonName) {
@@ -102,15 +111,19 @@ function App() {
     setPokemonName(newPokemonName);
   }
 
+  function handleReset() {
+    setPokemonName("");
+  }
+
   return (
 
     <div className="pokemon-info-app">
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        <PokemonErrorBoundary key={pokemonName}>
+        <ErrorBoundary FallbackComponent={ErrorFallback} onReset={handleReset}>
           <PokemonInfo pokemonName={pokemonName} />
-        </PokemonErrorBoundary>
+        </ErrorBoundary>
       </div>
     </div>
   );
